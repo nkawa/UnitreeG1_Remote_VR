@@ -68,7 +68,7 @@ export default function Home(props) {
 
   // MQTT 対応
   React.useEffect(() => {
-    setupMQTT(props, robotIDRef, nova2_ref, set_draw_ready); // useEffect で1回だけ実行される。
+//    setupMQTT(props, robotIDRef, nova2_ref, set_draw_ready); // useEffect で1回だけ実行される。
 
 
   }, []);
@@ -86,12 +86,14 @@ export default function Home(props) {
   
   
   React.useEffect(() => {
-    console.log("Draw Ready!");
+    console.log("Draw Ready!", draw_ready);
   }, [draw_ready]);
+
 
     return (
       <>
         <a-scene xr-mode-ui={`enabled: ${!(props.appmode === AppMode.viewer) ? 'true' : 'false'}; XRMode: xr`} >
+          
           <a-entity id="robot-registry"
             robot-registry
             event-distributor>
@@ -112,14 +114,12 @@ export default function Home(props) {
               /> : <></>
           }
 
-        <a-plane id="base_plane"
-            width="0.5" height="0.5" color="#7BC8A4"
-        />
+
 
 
         <a-plane id="unitree-g1-torso"
-               position="-0.25 0.4 -0.7" rotation="-90 0 110"
-               base-mover="velocityMax: 0.2; angularVelocityMax: 0.5"
+               position="0 0.8 -1.7" rotation="-90 0 90"
+               base-mover="velocityMax:0.2; angularVelocityMax: 0.5"
                width="0.4" height="0.4" color="#7BC8A4"
         >
           <a-plane id="g1r-unitree-r-arm"
@@ -133,6 +133,7 @@ export default function Home(props) {
 
 
           />
+          
           <a-plane id="g1l-unitree-l-arm"
                  width="0.1" height="0.1" color="green"
                  material="opacity: 0.5; transparent: true; side: double;"
