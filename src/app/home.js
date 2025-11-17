@@ -122,6 +122,7 @@ export default function Home(props) {
                base-mover="velocityMax:0.2; angularVelocityMax: 0.5"
                width="0.4" height="0.4" color="#7BC8A4"
         >
+
           <a-plane id="g1r-unitree-r-arm"
                  width="0.1" height="0.1" color="green"
                  material="opacity: 0.5; transparent: true; side: double;"
@@ -133,7 +134,7 @@ export default function Home(props) {
 
 
           />
-          
+      
           <a-plane id="g1l-unitree-l-arm"
                  width="0.1" height="0.1" color="green"
                  material="opacity: 0.5; transparent: true; side: double;"
@@ -142,6 +143,8 @@ export default function Home(props) {
                   reflect-worker-joints={`appmode: ${props.appmode}`}
 
                  arm-motion-ui
+                 default-event-target
+
           />
         </a-plane>
 

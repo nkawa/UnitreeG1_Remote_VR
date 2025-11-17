@@ -38,7 +38,7 @@ let firstReceiveJoint = true; // 最初のジョイント受信フラグ
 export const sendRobotJointMQTT = (joints, gripState) => {
   //  console.log("Joints!", joints)
   if (receive_state != JointReceiveStatus.READY) {
-    console.log("Not yet real robot joint received", receive_state, firstReceiveJoint);
+//    console.log("Not yet real robot joint received", receive_state, firstReceiveJoint);
     return; // 最初の受信まで送らない
   }
   // 角度への変換を実施
