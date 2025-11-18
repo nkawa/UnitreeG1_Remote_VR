@@ -53,7 +53,7 @@ export default function Home(props) {
 
   const [rtcStats, set_rtcStats] = React.useState([])
 
-  const nova2_ref = React.useRef(null);
+  const g1r_ref = React.useRef(null);
 
   const deg30 = Math.PI / 6.0;
   const deg90 = Math.PI / 2;
@@ -68,7 +68,7 @@ export default function Home(props) {
 
   // MQTT 対応
   React.useEffect(() => {
-//    setupMQTT(props, robotIDRef, nova2_ref, set_draw_ready); // useEffect で1回だけ実行される。
+      setupMQTT(props, robotIDRef, g1r_ref, set_draw_ready); // useEffect で1回だけ実行される。
 
 
   }, []);
@@ -104,7 +104,7 @@ export default function Home(props) {
             wasd-controls="acceleration: 200"
           ></a-entity>
 
-          <a-camera id="camera" stereocam ></a-camera>
+          <a-camera id="camera" stereocam position="0 1.1 0.2"></a-camera>
 
 
           {  // ステレオカメラ使うか extra-camera={props.appmode}>
@@ -118,12 +118,14 @@ export default function Home(props) {
 
 
         <a-plane id="unitree-g1-torso"
-               position="0 0.8 -1.7" rotation="-90 0 90"
+               position="0 0.55 -1.0" rotation="-90 0 90"
                base-mover="velocityMax:0.2; angularVelocityMax: 0.5"
                width="0.4" height="0.4" color="#7BC8A4"
         >
 
           <a-plane id="g1r-unitree-r-arm"
+                ref={g1r_ref}
+
                  width="0.1" height="0.1" color="green"
                  material="opacity: 0.5; transparent: true; side: double;"
                  robot-loader="model: g1-right"
@@ -143,7 +145,6 @@ export default function Home(props) {
                   reflect-worker-joints={`appmode: ${props.appmode}`}
 
                  arm-motion-ui
-                 default-event-target
 
           />
         </a-plane>
