@@ -36,11 +36,12 @@ AFRAME.registerComponent('thumbstick-menu', {
     this.el.appendChild(cylinder);
     // this.frame = buildUpFrameAxes(this.el);
     this.el.laserVisible = true;
-    //    this.el.addEventListener('loaded', () => {
-    //      flipRayOnOff(this.el, true);
-    // If the frameObject(a-axes-frame) is attached to this.el
-    // wait for it to appear, then turn off laser
-    //    });
+
+      // If the frameObject(a-axes-frame) is attached to this.el
+      // wait for it to appear, then turn off laser
+    this.el.addEventListener('loaded', () => {
+          flipRayOnOff(this.el, false);
+    });
 
     // flower-like menu entity
     this.menuRoot = new AFRAME.THREE.Group();
