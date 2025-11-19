@@ -47,7 +47,10 @@ AFRAME.registerComponent('reflect-worker-joints', {
 			this.sendMQTT = sendRobotJointMQTT;
 		}
 		this.workerDataJointsReady = false;
+
+		// **** ik-worker-start イベントを受け取ったら、workerData.current.joints が使えるか確認する
 		this.el.addEventListener('ik-worker-start', () => {
+			console.log("Get ik-worker-start! in reflect-worker-joints", this.el);
 			const robotId = this.el.id;
 			let checkCount = 0;
 			const checkWorkerJoints = () => {
@@ -66,6 +69,7 @@ AFRAME.registerComponent('reflect-worker-joints', {
 					if (this.axesList) { // exists?
 						if (this.axesList.length === jointData.length) {
 							// SUCCEED
+							console.log("reflect-worker-joints: workerData.current.joints is ready to use.",this.el);
 							this.workerDataJointsReady = true;
 							return;
 						} else {
@@ -83,7 +87,7 @@ AFRAME.registerComponent('reflect-worker-joints', {
 				setTimeout(checkWorkerJoints, 500);
 			};
 			checkWorkerJoints();
-			console.warn('workerDataJointsReady:', this.workerDataJointsReady);
+			console.log('workerDataJointsReady:', this.workerDataJointsReady);
 		}, { once: true });
 	},
 

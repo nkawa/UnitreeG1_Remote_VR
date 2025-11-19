@@ -55,6 +55,9 @@ export default function Home(props) {
 
   const g1r_ref = React.useRef(null);
 
+  const right_control = React.useRef(null);
+  const left_control = React.useRef(null);
+
   const deg30 = Math.PI / 6.0;
   const deg90 = Math.PI / 2;
   const deg45 = Math.PI / 4;
@@ -87,6 +90,19 @@ export default function Home(props) {
   
   React.useEffect(() => {
     console.log("Draw Ready!", draw_ready);
+    if(draw_ready){// ここでメニュー選択を実施しちゃう！
+    // 右手メニュー
+        console.log("Draw Ready! with control",right_control.current, left_control.current);
+        right_control.current?.emit('thumbmenu-select', {
+          index: 0,
+          texts: ["g1r-unitree-r-arm","ray","g1l-unitree-l-arm"]
+        });
+        left_control.current?.emit('thumbmenu-select', {
+          index: 0,
+          texts: ["g1l-unitree-l-arm","g1l-unitree-l-arm","ray"]
+        });
+
+    }
   }, [draw_ready]);
 
 
@@ -97,7 +113,7 @@ export default function Home(props) {
           <a-entity id="robot-registry"
             robot-registry
             event-distributor>
-            <VrControllerComponents appmode={props.appmode} />
+            <VrControllerComponents right={right_control} left={left_control} appmode={props.appmode} />
           </a-entity>
           <a-entity camera position="0 1.7 1"
             look-controls
@@ -117,26 +133,23 @@ export default function Home(props) {
 
 
 
+
+        {(props.appmode !== AppMode.simRobot)?
         <a-plane id="unitree-g1-torso"
                position="0 0.55 -1.0" rotation="-90 0 90"
                base-mover="velocityMax:0.2; angularVelocityMax: 0.5"
                width="0.4" height="0.4" color="#7BC8A4"
         >
-
           <a-plane id="g1r-unitree-r-arm"
                 ref={g1r_ref}
-
                  width="0.1" height="0.1" color="green"
                  material="opacity: 0.5; transparent: true; side: double;"
                  robot-loader="model: g1-right"
                  ik-worker={`${0}, ${0}, ${0}, ${0}, ${0}, 0, 0`}
                   reflect-worker-joints={`appmode: ${props.appmode}`}
                  arm-motion-ui
-                  default-event-target
-
-
+                  default-target
           />
-      
           <a-plane id="g1l-unitree-l-arm"
                  width="0.1" height="0.1" color="green"
                  material="opacity: 0.5; transparent: true; side: double;"
@@ -148,6 +161,26 @@ export default function Home(props) {
 
           />
         </a-plane>
+          :
+        <a-plane id="unitree-g1-torso"
+               position="0 0.55 -1.0" rotation="-90 0 90"
+               base-mover="velocityMax:0.2; angularVelocityMax: 0.5"
+               width="0.4" height="0.4" color="#7BC8A4"
+        >
+          <a-plane id="g1r-unitree-r-arm"
+                ref={g1r_ref}
+                 width="0.1" height="0.1" color="green"
+                 material="opacity: 0.5; transparent: true; side: double;"
+                 robot-loader="model: g1-right"
+          />
+          <a-plane id="g1l-unitree-l-arm"
+                 width="0.1" height="0.1" color="green"
+                 material="opacity: 0.5; transparent: true; side: double;"
+                 robot-loader="model: g1-left"
+          />
+        </a-plane>
+        }
+      
 
 
         </a-scene>

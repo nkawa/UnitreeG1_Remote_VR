@@ -58,12 +58,16 @@ AFRAME.registerComponent('robot-registry', {
   eventDeliveryOneLocation: function (id, distributor) {
     const idList = this.list();
     if (!idList.includes(id)) {
-      console.error('The specified id does not exist in the registry:', id);
+      console.error('The specified id does not exist in the registry:', id, distributor);
       return;
     }
     // const data = this.objects.get(id);
     // console.log('*#*# data:', data);
-    const listenerEl = this.objects.get(id)?.data?.el;
+    const baseData = this.objects.get(id)?.data;
+    const listenerEl = baseData.el;
+    
+    console.log('EVDL enable default listening event by',baseData,  listenerEl, ' id:', id,distributor);
+
     if (checkListenerList(listenerEl, distributor)) {
       Object.keys(distributor.listenersList).forEach(key =>
         this.disableEventDelivery(key, distributor));
@@ -165,7 +169,9 @@ AFRAME.registerComponent('target-selector', {
 
 
 function checkListenerList(listener, distributor) {
-  if (listener?.isEntity && distributor.hasLoaded) {
+  console.log("checkListenerList: listener, distributor", listener, distributor);
+
+  if (listener?.isEntity && distributor?.hasLoaded) {
     if (!listener?.shouldListenEvents) listener.shouldListenEvents = 0;
     if (Object.prototype.toString.call(distributor?.listenersList)
       === '[object Object]') {
@@ -183,22 +189,24 @@ function checkListenerList(listener, distributor) {
       return false;
     }
   } else {
+    console.log("checkListenerList: invalid listener or distributor not loaded",
+      listener, distributor);
     return false;
   }
 }
 
 
 AFRAME.registerComponent('default-target', {
-  schema: {
-    event: { default: 'thumbmenu-select' }
-  },
   init: function () {
-    console.log("Set default-target");
     // ロボットの読み込みが終わったら！
     this.el.addEventListener('ik-worker-start', () => {
-      const robotRegistryComp = this.el.sceneEl.robotRegistryComp;
-      robotRegistryComp?.eventDeliveryOneLocation(this.el.id); // デフォルトでここだけに！
-      console.log('### default-target: enabled event delivery for id:', this.el.id);
+      var sceneEl = document.querySelector('a-scene');
+      const robotRegistryComp = sceneEl.robotRegistryComp;
+      console.log("Set default-target", this.el, robotRegistryComp);
+      const distributorEl = sceneEl.getAttribute('event-distributor') ? sceneEl : null;
+      console.log("distributorEl:", distributorEl, sceneEl.getAttribute('event-distributor'));
+        console.log('### check default-target: enabled event delivery for id:', this.el.id, robotRegistryComp);
+        robotRegistryComp?.eventDeliveryOneLocation(this.el.id,distributorEl); // デフォルトでここだけに！
     });
 
   }

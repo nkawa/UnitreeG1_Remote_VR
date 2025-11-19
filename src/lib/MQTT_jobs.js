@@ -43,7 +43,7 @@ export const sendRobotJointMQTT = (joints, gripState) => {
   }
   // 角度への変換を実施
   const degJoints = joints.map(rad => rad * 180 / Math.PI)
-  degJoints[1] += NOVA2_JOINT2_DIFF // for nova2 <-> internal 変換
+  console.log("sendRobotJointMQTT:", degJoints)
   const ctl_json = JSON.stringify({
     time: send_count++,
     joints: degJoints,
@@ -87,7 +87,7 @@ const waitSlrmReady = async (robotDOMRef, message) => {
 
 export const setupMQTT = (props, robotIDRef, robotDOMRef, set_draw_ready) => {
   firstReceiveJoint = true; // 最初のジョイント受信フラグ
-  receive_state = JointReceiveStatus.READY // 実ロボットからの受信状態
+  receive_state = JointReceiveStatus.READY // 実ロボットからの受信状態(デバッグ用)
 
   // MQTT connected request
   const requestRobot = () => {
