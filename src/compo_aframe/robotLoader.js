@@ -198,16 +198,16 @@ async function urdfLoader2(planeEl,
     } else {
       visuals = [];
     }
-    visuals.forEach(visual => {
-      console.log('Joint visual geometry.mesh.$.filename:',
-        visual.geometry.mesh?.$.filename);
-    });
+//    visuals.forEach(visual => {
+//      console.log('Joint visual geometry.mesh.$.filename:',
+ //       visual.geometry.mesh?.$.filename);
+//    });
     // linkMap[joint.child.$.link].visual.map(visual => {
     for (const visual of visuals) {
       const origin = visual.origin;
       const filename = visual.geometry.mesh?.$.filename;
       // visual.geometry.mesh?.$.filename).filter(filename => filename);
-      console.log('Joint meshes:', filename, 'origin:', origin);
+//      console.log('Joint meshes:', filename, 'origin:', origin);
       const el = document.createElement('a-entity');
       el.setAttribute('class', 'visual');
       axisEl.appendChild(el);
@@ -216,8 +216,8 @@ async function urdfLoader2(planeEl,
         const cleanup = (success) => {
           el.removeEventListener('model-loaded', onLoaded);
           el.removeEventListener('model-error', onError);
-          console.log('MMMM loader success:', success,
-            ' cleanup listeners for:', filename);
+//          console.log('MMMM loader success:', success,
+//            ' cleanup listeners for:', filename);
         };
         const onLoaded = () => { cleanup(true); resolve(true); };
         const onError = () => { cleanup(false); resolve(false); };
@@ -230,14 +230,14 @@ async function urdfLoader2(planeEl,
       });
     }
   }
-  console.log('######## Final: id:', planeEl.id,
-    'base link:', base, 'end link:', parentEl);
+//  console.log('######## Final: id:', planeEl.id,
+//    'base link:', base, 'end link:', parentEl);
 
   const id = planeEl.id;
   const endLinkEl = parentEl;
   const axes = axesList;
   const registerRobotFunc = () => { // 
-    console.log('#><><><# planeEl.id:', planeEl?.id, 'endLinkEl:', endLinkEl);
+//    console.log('#><><><# planeEl.id:', planeEl?.id, 'endLinkEl:', endLinkEl);
     const robotRegistryComp = planeEl.sceneEl.robotRegistryComp;
     if (robotRegistryComp.get(id)) {
       console.warn('robot:', id, 'already registered');
@@ -247,8 +247,8 @@ async function urdfLoader2(planeEl,
     planeEl.axes = axes;
     planeEl.endLink = endLinkEl;
     // console.warn('#><><><# planeEl.id:',planeEl?.id, 'endLinkEl:',planeEl.endLink);
-    console.log('######## ', id, ' registered with axes:', axes,
-      'endLink:', endLinkEl);
+//    console.log('######## ', id, ' registered with axes:', axes,
+//      'endLink:', endLinkEl);
     planeEl.emit('robot-registered', { id, axes, endLinkEl });
   };
   if (planeEl.model) {
@@ -304,10 +304,10 @@ function consoleChildLink(el) {
   if (el) {
     const linkEl = el.querySelector('.link');
     if (linkEl) {
-      console.log('Child link:', linkEl);
+//      console.log('Child link:', linkEl);
       consoleChildLink(linkEl);
     } else {
-      console.log('No child link found in:', el);
+//      console.log('No child link found in:', el);
     }
   }
 }

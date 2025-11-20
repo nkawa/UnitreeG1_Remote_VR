@@ -5,6 +5,7 @@ import AFRAME from 'aframe';
 
 // robot-dom-ready(robotLoader.js) -> ik-worker-start(ikWorker.js) -> default-event-target(ここ)
 
+// とりあえず使わない　202511
 AFRAME.registerComponent('default-event-target', {
   init: function () {
     console.log("Set default-event-target", this.el);

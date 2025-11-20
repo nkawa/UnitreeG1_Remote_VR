@@ -2,7 +2,7 @@
 import * as React from 'react'
 
 import { connectMQTT, mqttclient, idtopic, subscribeMQTT, publishMQTT, codeType } from '../lib/MetaworkMQTT'
-import { AppMode, isControlMode, isNonControlMode } from '../app/appmode.js';
+import { AppMode, isControlMode, requireRobotRequest, isNonControlMode } from '../app/appmode.js';
 
 
 const MQTT_REQUEST_TOPIC = "mgr/request";
@@ -35,17 +35,24 @@ let firstReceiveJoint = true; // 最初のジョイント受信フラグ
 
 
 // 通常はロボットの関節状況をこれで送信
-export const sendRobotJointMQTT = (joints, gripState) => {
+export const sendRobotJointMQTT = (joints, gripState, arm) => {
   //  console.log("Joints!", joints)
+//  receive_state = JointReceiveStatus.READY // for debug
+
   if (receive_state != JointReceiveStatus.READY) {
-//    console.log("Not yet real robot joint received", receive_state, firstReceiveJoint);
+    console.log("Not yet real robot joint received", receive_state, firstReceiveJoint);
     return; // 最初の受信まで送らない
   }
+
+  if (arm==="left"){// とりあえず右だけ
+    return;
+  } // default right
   // 角度への変換を実施
   const degJoints = joints.map(rad => rad * 180 / Math.PI)
   console.log("sendRobotJointMQTT:", degJoints)
   const ctl_json = JSON.stringify({
     time: send_count++,
+    arm: arm,
     joints: degJoints,
     grip: [gripState],
   });
@@ -53,12 +60,13 @@ export const sendRobotJointMQTT = (joints, gripState) => {
 }
 
 // viewer/simRobot はロボットの関節をこれで送信
-export const sendRobotStateMQTT = (joints, gripState) => {
+export const sendRobotStateMQTT = (joints, gripState,arm) => {
   //  console.log("Joints!", joints)
   const state_json = JSON.stringify({
     time: send_count++,
     joints: joints,
     grip: [gripState],
+    arm: arm
   });
   publishMQTT(MQTT_ROBOT_STATE_TOPIC + idtopic, state_json);
 };
@@ -69,7 +77,7 @@ const waitSlrmReady = async (robotDOMRef, message) => {
   if (robotDOMRef.current && robotDOMRef.current.workerRef) {
     const workerData = robotDOMRef.current.workerData;
     while (workerData.current.status.status != "END") {
-      await sleep(100);
+      await sleep(150);
       //                  console.log("Waiting for SLRM_READY...", workerStatus);
       count++;
       if (count % 10 ==0) console.log("wait READY",count, workerData.current.status)
@@ -85,9 +93,9 @@ const waitSlrmReady = async (robotDOMRef, message) => {
 }
 
 
-export const setupMQTT = (props, robotIDRef, robotDOMRef, set_draw_ready) => {
+export const setupMQTT = (props, robotIDRef, robotRightDOMRef,robotLeftDOMRef, set_draw_ready) => {
   firstReceiveJoint = true; // 最初のジョイント受信フラグ
-  receive_state = JointReceiveStatus.READY // 実ロボットからの受信状態(デバッグ用)
+  receive_state = JointReceiveStatus.WAITING // 実ロボットからの受信状態
 
   // MQTT connected request
   const requestRobot = () => {
@@ -97,7 +105,7 @@ export const setupMQTT = (props, robotIDRef, robotDOMRef, set_draw_ready) => {
       type: codeType,  //  コードタイプ（Request でマッチングに利用)
     }
     window.setTimeout(async () => {
-      const received = await waitSlrmReady(robotDOMRef, "Timeout waiting for SLRM_READY for robot request");
+      const received = await waitSlrmReady(robotRightDOMRef, "Timeout waiting for SLRM_READY for robot request");
       if (received) {
         console.log("Publish request robot", requestInfo)
         publishMQTT(MQTT_REQUEST_TOPIC, JSON.stringify(requestInfo));
@@ -106,9 +114,7 @@ export const setupMQTT = (props, robotIDRef, robotDOMRef, set_draw_ready) => {
 
       } else {
         console.log("Can't request robot, SLRM not ready");
-
-              set_draw_ready(true); // robot request 出すなら、 draw ready でいいよね？
-
+          
       }
     }, 500); // worker 準備待ちもあって、少し遅らせる
   }
@@ -123,10 +129,10 @@ export const setupMQTT = (props, robotIDRef, robotDOMRef, set_draw_ready) => {
       subscribeMQTT([
         MQTT_DEVICE_TOPIC
       ]);
-      if (isControlMode(props.appmode))
+      if (requireRobotRequest(props.appmode))
         requestRobot();
     } else {
-      if (isControlMode(props.appmode)) {
+      if (requireRobotRequest(props.appmode)) {
         window.mqttClient = connectMQTT(requestRobot);
       } else {
         window.mqttClient = connectMQTT();
@@ -161,10 +167,10 @@ export const setupMQTT = (props, robotIDRef, robotDOMRef, set_draw_ready) => {
 
             console.log("Viewer,Sim  control topic:", jdef)
             // 各joint 情報を worker に送信！
-            console.log("robotDOMRef:", robotDOMRef);
+            console.log("robotDOMRef:", robotRightDOMRef);
 
-            if (robotDOMRef.current && robotDOMRef.current.workerRef) {
-              const workerRef = robotDOMRef.current.workerRef;
+            if (robotRightDOMRef.current && robotRightDOMRef.current.workerRef) {
+              const workerRef = robotRightDOMRef.current.workerRef;
               console.log("Send to workerRef:", workerRef, jdef)
               workerRef.current?.postMessage(
                 {
@@ -193,7 +199,7 @@ export const setupMQTT = (props, robotIDRef, robotDOMRef, set_draw_ready) => {
             // ここでSLRM_READY をループして待つべし！
             // ikWorkerManager.js で設定される
             window.setTimeout(async () => {
-              const received = await waitSlrmReady(robotDOMRef, "Timeout waiting for SLRM_READY after robot assigned");
+              const received = await waitSlrmReady(robotRightDOMRef, "Timeout waiting for SLRM_READY after robot assigned");
               if (received) {
                 receive_state = JointReceiveStatus.ROBOT_RECEIVED;
                 subscribeMQTT([
@@ -207,6 +213,8 @@ export const setupMQTT = (props, robotIDRef, robotDOMRef, set_draw_ready) => {
 
         if (topic === MQTT_ROBOT_STATE_TOPIC + robotIDRef.current) { // ロボットの姿勢を受け取ったら
           let data = JSON.parse(message.toString()) ///
+          console.log("Receive request joints",data)
+
 //          const joints = data.joints
           // ここで、joints の安全チェックをすべき
           // 常時受信する形に変更されたので　Unsubscribeしない
@@ -214,32 +222,35 @@ export const setupMQTT = (props, robotIDRef, robotDOMRef, set_draw_ready) => {
           //mqttclient.unsubscribe(MQTT_ROBOT_STATE_TOPIC+robotIDRef.current) //
           if (firstReceiveJoint) {
             receive_state = JointReceiveStatus.JOINT_RECEIVED;
-            if (robotDOMRef.current && robotDOMRef.current.workerRef) {
-              const workerRef = robotDOMRef.current.workerRef;
-              let jdef = data.joints
-              if (!jdef){
-                const joints = [data.j1, data.j2, data.j3, data.j4, data.j5, data.j6]
-                jdef = joints.map(deg => deg * Math.PI / 180);
-              }else{// 
-                if (jdef.length ===7) jdef.pop() // Robot device は7つ送ってくる
-                jdef[1] -= NOVA2_JOINT2_DIFF // ここで差分調整// for nova2 <-> internal 変換
-                jdef = jdef.map(deg => deg * Math.PI / 180);
-              }
-              console.log("Got Robot POSE to workerRef:", workerRef, jdef)
+            if (robotRightDOMRef.current && robotRightDOMRef.current.workerRef) {
+              const workerRightRef = robotRightDOMRef.current.workerRef;
+              const workerLeftRef = robotLeftDOMRef.current.workerRef;
+              let right = data.right
+              let left = data.left
+              right = right.map(deg => deg * Math.PI / 180);
+              left = left.map(deg => deg * Math.PI / 180);
+     
+              console.log("Got Robot POSE to workerRef:", workerRightRef, left,right)
               
-              workerRef.current?.postMessage(
+              workerRightRef.current?.postMessage(
                 {
                   type: 'set_initial_joints',
-                  joints: jdef
+                  joints: right
                 }); // このPOST 結果が終わったら READY になる
-
+              workerLeftRef.current?.postMessage(
+                {
+                  type: 'set_initial_joints',
+                  joints: left
+                }); // このPOST 結果が終わったら READY になる
+            }else{
+              console.log("No robotDOMRef or workerRef!")
             }
 
-            if (props.appmode !== AppMode.monitor) {
+            if (props.appmode !== AppMode.monitor && props.appmode !== AppMode.viewer) {// ctrl mode の時
               firstReceiveJoint = false
               window.setTimeout(async () => {
                 console.log("*** wait SLRM_READY")
-                const received = await waitSlrmReady(robotDOMRef, "Timeout waiting for SLRM_READY sending movement");
+                const received = await waitSlrmReady(robotRightDOMRef, "Timeout waiting for SLRM_READY sending movement");
                 if (received) {
                   receive_state = JointReceiveStatus.READY;
                   console.log("Start to send movement!(for robot)")

@@ -38,6 +38,7 @@ function setJointDirectlyComponent({name, unit}) {
 AFRAME.registerComponent('reflect-worker-joints', {
 	schema: {
 		appmode: {type: 'string', default: ''}, // appmode を伝える
+		arm: {type: 'string', default: ''}, // left or right
 	},
 	init: function () {
 		console.log("reflect-worker-joints initialized. appmode:", this.data.appmode);
@@ -107,7 +108,7 @@ AFRAME.registerComponent('reflect-worker-joints', {
 
 			// left right の情報も送る必要があるよね！
 			// 本当は一緒におくったほうが良いから、、、どっちかだけ？
-			this.sendMQTT(jointData, this.el.gripState);
+			this.sendMQTT(jointData, this.el.gripState, this.data.arm);
 		}
 	}
 });

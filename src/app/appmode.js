@@ -9,9 +9,15 @@ export const AppMode = {
   viewer: 'viewer',        // ビューワ（ロボットの状態を表示するだけ）:カメラ無
   simRobot: 'simRobot',    // 仮想ロボット（実ロボットのシミュレータ）
   practice: 'practice',    // 練習モード (荷物を運ぶタイプ：VRのみ)
-  monitor: 'monitor',    // 監視モード (ロボットの状態を監視する)
+  monitor: 'monitor',    // 監視モード (実ロボットの状態を監視する)
 };
 
+export function requireRobotRequest(appmode) {
+  return (appmode === AppMode.normal ||
+          appmode === AppMode.withCam ||
+          appmode === AppMode.monitor ||
+          appmode === AppMode.withDualCam);
+}
 
 export function isControlMode(appmode) {
   return (appmode === AppMode.normal ||
@@ -28,6 +34,5 @@ export function isCameraMode(appmode) {
 export function isNonControlMode(appmode) {
   return (
           appmode === AppMode.viewer ||
-          appmode === AppMode.simRobot ||
-          appmode === AppMode.monitor);
+          appmode === AppMode.simRobot);
 }

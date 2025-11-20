@@ -54,6 +54,7 @@ export default function Home(props) {
   const [rtcStats, set_rtcStats] = React.useState([])
 
   const g1r_ref = React.useRef(null);
+  const g1l_ref = React.useRef(null);
 
   const right_control = React.useRef(null);
   const left_control = React.useRef(null);
@@ -71,7 +72,7 @@ export default function Home(props) {
 
   // MQTT 対応
   React.useEffect(() => {
-      setupMQTT(props, robotIDRef, g1r_ref, set_draw_ready); // useEffect で1回だけ実行される。
+      setupMQTT(props, robotIDRef, g1r_ref,g1l_ref, set_draw_ready); // useEffect で1回だけ実行される。
 
 
   }, []);
@@ -92,7 +93,7 @@ export default function Home(props) {
     console.log("Draw Ready!", draw_ready);
     if(draw_ready){// ここでメニュー選択を実施しちゃう！
     // 右手メニュー
-        console.log("Draw Ready! with control",right_control.current, left_control.current);
+//        console.log("Draw Ready! with control",right_control.current, left_control.current);
         right_control.current?.emit('thumbmenu-select', {
           index: 0,
           texts: ["g1r-unitree-r-arm","ray","g1l-unitree-l-arm"]
@@ -124,7 +125,7 @@ export default function Home(props) {
 
 
           {  // ステレオカメラ使うか extra-camera={props.appmode}>
-            (props.appmode === AppMode.withCam || props.appmode === AppMode.withDualCam || props.appmode === AppMode.monitor) ?
+            (props.appmode === AppMode.withCam || props.appmode === AppMode.withDualCam || props.appmode === AppMode.viewer) ?
               <StereoVideo rendered={draw_ready} set_rtcStats={set_rtcStats} 
                 appmode={props.appmode}
               /> : <></>
@@ -146,16 +147,16 @@ export default function Home(props) {
                  material="opacity: 0.5; transparent: true; side: double;"
                  robot-loader="model: g1-right"
                  ik-worker={`${0}, ${0}, ${0}, ${0}, ${0}, 0, 0`}
-                  reflect-worker-joints={`appmode: ${props.appmode}`}
+                  reflect-worker-joints={`appmode: ${props.appmode}; arm: right;`}
                  arm-motion-ui
-                  default-target
           />
           <a-plane id="g1l-unitree-l-arm"
+                ref={g1l_ref}
                  width="0.1" height="0.1" color="green"
                  material="opacity: 0.5; transparent: true; side: double;"
                  robot-loader="model: g1-left"
                  ik-worker={`${0}, ${0}, ${0}, ${0}, ${0}, 0, 0`}
-                  reflect-worker-joints={`appmode: ${props.appmode}`}
+                  reflect-worker-joints={`appmode: ${props.appmode}; arm: left;`}
 
                  arm-motion-ui
 

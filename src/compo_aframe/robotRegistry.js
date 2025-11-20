@@ -15,9 +15,9 @@ AFRAME.registerComponent('robot-registry', {
     console.log('Registry: registry add id:', id);
     if (id) {
       if (this.get(id)) {
-        console.warn('registry add already exist id:', id);
+//        console.warn('registry add already exist id:', id);
         Object.assign(this.get(id), data);
-        console.log('registry add data:', this.get(id));
+//        console.log('registry add data:', this.get(id));
       } else {
         this.set(id, data);
       }
@@ -66,7 +66,7 @@ AFRAME.registerComponent('robot-registry', {
     const baseData = this.objects.get(id)?.data;
     const listenerEl = baseData.el;
     
-    console.log('EVDL enable default listening event by',baseData,  listenerEl, ' id:', id,distributor);
+//    console.log('EVDL enable default listening event by',baseData,  listenerEl, ' id:', id,distributor);
 
     if (checkListenerList(listenerEl, distributor)) {
       Object.keys(distributor.listenersList).forEach(key =>
@@ -169,7 +169,7 @@ AFRAME.registerComponent('target-selector', {
 
 
 function checkListenerList(listener, distributor) {
-  console.log("checkListenerList: listener, distributor", listener, distributor);
+//  console.log("checkListenerList: listener, distributor", listener, distributor);
 
   if (listener?.isEntity && distributor?.hasLoaded) {
     if (!listener?.shouldListenEvents) listener.shouldListenEvents = 0;
@@ -196,6 +196,7 @@ function checkListenerList(listener, distributor) {
 }
 
 
+// とりあえず使わない
 AFRAME.registerComponent('default-target', {
   init: function () {
     // ロボットの読み込みが終わったら！
