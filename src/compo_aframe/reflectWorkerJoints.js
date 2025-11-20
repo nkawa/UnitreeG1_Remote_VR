@@ -51,7 +51,7 @@ AFRAME.registerComponent('reflect-worker-joints', {
 
 		// **** ik-worker-start イベントを受け取ったら、workerData.current.joints が使えるか確認する
 		this.el.addEventListener('ik-worker-start', () => {
-			console.log("Get ik-worker-start! in reflect-worker-joints", this.el);
+//			console.log("Get ik-worker-start! in reflect-worker-joints", this.el);
 			const robotId = this.el.id;
 			let checkCount = 0;
 			const checkWorkerJoints = () => {

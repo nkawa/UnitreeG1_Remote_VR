@@ -48,12 +48,12 @@ export const sendRobotJointMQTT = (joints, gripState, arm) => {
     return;
   } // default right
   // 角度への変換を実施
-  const degJoints = joints.map(rad => rad * 180 / Math.PI)
-  console.log("sendRobotJointMQTT:", degJoints)
+//  const degJoints = joints.map(rad => rad * 180 / Math.PI)
+//  console.log("sendRobotJointMQTT:", degJoints)
   const ctl_json = JSON.stringify({
     time: send_count++,
     arm: arm,
-    joints: degJoints,
+    joints: joints,
     grip: [gripState],
   });
   publishMQTT(MQTT_CTRL_TOPIC, ctl_json);
@@ -213,22 +213,16 @@ export const setupMQTT = (props, robotIDRef, robotRightDOMRef,robotLeftDOMRef, s
 
         if (topic === MQTT_ROBOT_STATE_TOPIC + robotIDRef.current) { // ロボットの姿勢を受け取ったら
           let data = JSON.parse(message.toString()) ///
-          console.log("Receive request joints",data)
 
-//          const joints = data.joints
-          // ここで、joints の安全チェックをすべき
-          // 常時受信する形に変更されたので　Unsubscribeしない
-          //          console.log("Robot state topic:", joints)
-          //mqttclient.unsubscribe(MQTT_ROBOT_STATE_TOPIC+robotIDRef.current) //
           if (firstReceiveJoint) {
+            console.log("First joint Received joints",data)
+
             receive_state = JointReceiveStatus.JOINT_RECEIVED;
             if (robotRightDOMRef.current && robotRightDOMRef.current.workerRef) {
               const workerRightRef = robotRightDOMRef.current.workerRef;
               const workerLeftRef = robotLeftDOMRef.current.workerRef;
               let right = data.right
               let left = data.left
-              right = right.map(deg => deg * Math.PI / 180);
-              left = left.map(deg => deg * Math.PI / 180);
      
               console.log("Got Robot POSE to workerRef:", workerRightRef, left,right)
               

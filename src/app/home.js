@@ -139,11 +139,11 @@ export default function Home(props) {
         <a-plane id="unitree-g1-torso"
                position="0 0.55 -1.0" rotation="-90 0 90"
                base-mover="velocityMax:0.2; angularVelocityMax: 0.5"
-               width="0.4" height="0.4" color="#7BC8A4"
+               width="0" height="0" color="#7BC8A4"
         >
           <a-plane id="g1r-unitree-r-arm"
                 ref={g1r_ref}
-                 width="0.1" height="0.1" color="green"
+                 width="0" height="0" color="green"
                  material="opacity: 0.5; transparent: true; side: double;"
                  robot-loader="model: g1-right"
                  ik-worker={`${0}, ${0}, ${0}, ${0}, ${0}, 0, 0`}
@@ -152,7 +152,7 @@ export default function Home(props) {
           />
           <a-plane id="g1l-unitree-l-arm"
                 ref={g1l_ref}
-                 width="0.1" height="0.1" color="green"
+                 width="0" height="0" color="green"
                  material="opacity: 0.5; transparent: true; side: double;"
                  robot-loader="model: g1-left"
                  ik-worker={`${0}, ${0}, ${0}, ${0}, ${0}, 0, 0`}
@@ -166,7 +166,7 @@ export default function Home(props) {
         <a-plane id="unitree-g1-torso"
                position="0 0.55 -1.0" rotation="-90 0 90"
                base-mover="velocityMax:0.2; angularVelocityMax: 0.5"
-               width="0.4" height="0.4" color="#7BC8A4"
+               width="0.1" height="0.1" color="#7BC8A4"
         >
           <a-plane id="g1r-unitree-r-arm"
                 ref={g1r_ref}
