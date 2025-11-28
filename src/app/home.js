@@ -17,6 +17,9 @@ import '../compo_aframe/motionFilter.js'
 import '../compo_aframe/model_opacity.js'
 import '../compo_aframe/abButtonControl.js';
 
+import '../compo_aframe/attachToAnother.js';
+import '../compo_aframe/fingerCloser.js';
+
 import { getCookie } from '../lib/cookie_id.js';
 import { setupMQTT } from '../lib/MQTT_jobs.js';
 
@@ -150,7 +153,30 @@ export default function Home(props) {
                  ik-worker={`${0}, ${0}, ${0}, ${0}, ${0}, 0, 0`}
                   reflect-worker-joints={`appmode: ${props.appmode}; arm: right;`}
                  arm-motion-ui
-          />
+          >
+              <a-circle id="g1rt-unitree-r-thumb"
+                    robot-loader="model: g1-right-thumb"
+                    attach-to-another="to: g1r-unitree-r-arm"
+                    finger-closer="stationaryJoints: 0; closeMax: -45"
+                    radius="0.03" color="blue"
+                    material="opacity: 0.5; transparent: true;"
+              />
+              <a-circle id="g1ri-unitree-r-index"
+                    robot-loader="model: g1-right-index"
+                    attach-to-another="to: g1r-unitree-r-arm"
+                    finger-closer
+                    radius="0.03" color="blue"
+                    material="opacity: 0.5; transparent: true;"
+              />
+              <a-circle id="g1rm-unitree-r-middle"
+                    robot-loader="model: g1-right-middle"
+                    attach-to-another="to: g1r-unitree-r-arm"
+                    finger-closer
+                    radius="0.03" color="blue"
+                    material="opacity: 0.5; transparent: true;"
+              />
+          </a-plane>
+
           <a-plane id="g1l-unitree-l-arm"
                 ref={g1l_ref}
                  width="0" height="0" color="green"
@@ -161,7 +187,29 @@ export default function Home(props) {
 
                  arm-motion-ui
 
+          >
+          <a-circle id="g1lt-unitree-l-thumb"
+                    robot-loader="model: g1-left-thumb"
+                    attach-to-another="to: g1l-unitree-l-arm"
+                    finger-closer="stationaryJoints: 0; closeMax: 45"
+                    radius="0.03" color="blue"
+                    material="opacity: 0.5; transparent: true;"
           />
+          <a-circle id="g1li-unitree-l-index"
+                    robot-loader="model: g1-left-index"
+                    attach-to-another="to: g1l-unitree-l-arm"
+                    finger-closer="closeMax: -45"
+                    radius="0.03" color="blue"
+                    material="opacity: 0.5; transparent: true;"
+          />
+          <a-circle id="g1lm-unitree-l-middle"
+                    robot-loader="model: g1-left-middle"
+                    attach-to-another="to: g1l-unitree-l-arm"
+                    finger-closer="closeMax: -45"
+                    radius="0.03" color="blue"
+                    material="opacity: 0.5; transparent: true;"
+          />
+          </a-plane>
         </a-plane>
           :
         <a-plane id="unitree-g1-torso"
