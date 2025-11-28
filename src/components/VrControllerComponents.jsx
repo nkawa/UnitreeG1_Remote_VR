@@ -3,6 +3,8 @@
 import AFRAME from 'aframe';
 import '../compo_aframe/vrControllerThumbMenu.js'; // with thumbMenuEventHandler
 import '../compo_aframe/axesFrame.js';
+import '../compo_aframe/abButtonControl.js';
+import '../compo_aframe/gripControl.js';
 
 
 export default VrControllerComponents;
@@ -20,6 +22,8 @@ function VrControllerComponents(props) {
                 line="color: blue; opacity: 0.75"
                 thumbstick-menu={`items: ${menuItems1}`}
                 thumbmenu-event-handler
+                ab-button-control
+                grip-controll
                 target-selector
                 event-distributor
                 visible="true">
