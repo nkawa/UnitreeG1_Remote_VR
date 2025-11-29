@@ -4,6 +4,7 @@ import AFRAME from 'aframe';
 AFRAME.registerComponent('grip-control', {
   init: function () {
     this.el.gripState = false;
+    console.log("Setup grip-control component");
     this.el.addEventListener('gripdown', (evt) => {
       this.el.gripState = true;
       console.log("Grip on!")

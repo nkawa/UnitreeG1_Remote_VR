@@ -45,8 +45,8 @@ export default function IkWorkerManager({robotName,
 	break;
       case 'joints':
 	if (event.data.joints) {
-	  console.debug("Worker joint message:",
-			event.data.joints.map(x => x.toFixed(3)).join(', '));
+//	  console.debug("Worker joint message:",
+//			event.data.joints.map(x => x.toFixed(3)).join(', '));
 	  // Always skip to the latest data
 	  workerData.current.joints = event.data.joints;
 	}

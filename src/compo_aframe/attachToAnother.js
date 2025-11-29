@@ -17,7 +17,7 @@ AFRAME.registerComponent('attach-to-another', {
 	// console.warn('QQQQQ endLink.hasLoaded?',endLink.hasLoaded);
 	try {
 	  endLink.appendChild(this.el);
-	  console.log(`QQQQQ Attached ${this.el.id} to ${robot.id}'s endLink:`,endLink);
+//	  console.log(`QQQQQ Attached ${this.el.id} to ${robot.id}'s endLink:`,endLink);
 	  this.el.removeAttribute('position');
 	  this.el.removeAttribute('rotation');
 	  this.el.removeAttribute('scale');

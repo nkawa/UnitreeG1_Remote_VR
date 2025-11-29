@@ -98,7 +98,7 @@ AFRAME.registerComponent('arm-motion-ui', {
       }
     });
     this.el.addEventListener('triggerup', (evt) => {
-      console.log('### trigger up event');
+//      console.log('### trigger up event');
       this.vrControllerEl = evt.detail?.originalTarget;
       this.triggerdownState = false;
 
@@ -150,6 +150,8 @@ AFRAME.registerComponent('arm-motion-ui', {
         this.frameMarker.object3D.quaternion.copy(newObjPose[1]);
         const m4 = new THREE.Matrix4();
         m4.compose(newObjPose[0], newObjPose[1], new THREE.Vector3(1, 1, 1));
+
+        // ここで移動先を指定している
         this.el.workerRef?.current?.postMessage({
           type: 'destination',
           endLinkPose: m4.elements

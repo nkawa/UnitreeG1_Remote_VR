@@ -16,6 +16,9 @@ import '../compo_aframe/default_event_target.js';
 import '../compo_aframe/motionFilter.js'
 import '../compo_aframe/model_opacity.js'
 import '../compo_aframe/abButtonControl.js';
+import '../compo_aframe/xyButtonControl.js';
+import '../compo_aframe/gripControl.js';
+import '../compo_aframe/thumbStickControl.js';
 
 import '../compo_aframe/attachToAnother.js';
 import '../compo_aframe/fingerCloser.js';
@@ -114,7 +117,7 @@ export default function Home(props) {
     return (
       <>
         <a-scene xr-mode-ui={`enabled: ${!(props.appmode === AppMode.viewer) ? 'true' : 'false'}; XRMode: xr`} >
-          
+          {/* robot registry は１つだけ */}
           <a-entity id="robot-registry"
             robot-registry
             event-distributor>
@@ -151,8 +154,11 @@ export default function Home(props) {
                  material="opacity: 0.5; transparent: true; side: double;"
                  robot-loader="model: g1-right"
                  ik-worker={`${0}, ${0}, ${0}, ${0}, ${0}, 0, 0`}
-                  reflect-worker-joints={`appmode: ${props.appmode}; arm: right;`}
+                 reflect-worker-joints={`appmode: ${props.appmode}; arm: right;`}
                  arm-motion-ui
+                 ab-button-control
+                 grip-control
+                 thumb-stick-control
           >
               <a-circle id="g1rt-unitree-r-thumb"
                     robot-loader="model: g1-right-thumb"
@@ -185,7 +191,11 @@ export default function Home(props) {
                  ik-worker={`${0}, ${0}, ${0}, ${0}, ${0}, 0, 0`}
                   reflect-worker-joints={`appmode: ${props.appmode}; arm: left;`}
 
-                 arm-motion-ui
+                arm-motion-ui
+                xy-button-control
+                grip-control
+                thumb-stick-control
+
 
           >
           <a-circle id="g1lt-unitree-l-thumb"

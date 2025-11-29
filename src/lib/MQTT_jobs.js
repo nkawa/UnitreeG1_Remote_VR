@@ -35,7 +35,7 @@ let firstReceiveJoint = true; // 最初のジョイント受信フラグ
 
 
 // 通常はロボットの関節状況をこれで送信
-export const sendRobotJointMQTT = (joints, gripState, arm,  button_a, button_b) => {
+export const sendRobotJointMQTT = (joints, gripState, arm,  button_a, button_b, thumbstick) => {
   //  console.log("Joints!", joints)
 //  receive_state = JointReceiveStatus.READY // for debug
 
@@ -56,19 +56,21 @@ export const sendRobotJointMQTT = (joints, gripState, arm,  button_a, button_b) 
     joints: joints,
     grip: [gripState],
     button: [button_a, button_b],
+    thumbstick: thumbstick
   });
   publishMQTT(MQTT_CTRL_TOPIC, ctl_json);
 }
 
 // viewer/simRobot はロボットの関節をこれで送信
-export const sendRobotStateMQTT = (joints, gripState,arm, button_a, button_b) => {
+export const sendRobotStateMQTT = (joints, gripState,arm, button_a, button_b,thumbstick) => {
   //  console.log("Joints!", joints)
   const state_json = JSON.stringify({
     time: send_count++,
     joints: joints,
     grip: [gripState],
     arm: arm,
-    button: [button_a, button_b]
+    button: [button_a, button_b],
+    thumbstick: thumbstick
   });
   publishMQTT(MQTT_ROBOT_STATE_TOPIC + idtopic, state_json);
 };

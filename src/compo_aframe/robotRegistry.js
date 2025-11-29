@@ -1,8 +1,10 @@
 import AFRAME from 'aframe'
 
+
+// 各ロボットパーツ毎に、 robotRegistry がある。。。
 AFRAME.registerComponent('robot-registry', {
   init: function () {
-    this.el.sceneEl.robotRegistryComp = this;
+    this.el.sceneEl.robotRegistryComp = this; // シーンに一つだけ
     this.objects = new Map();
   },
   set: function (id, data) { // data: {el: robotEl, axes: [...axes]}
