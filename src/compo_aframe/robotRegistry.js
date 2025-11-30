@@ -111,6 +111,7 @@ AFRAME.registerComponent('event-distributor', {
       ['thumbmenu-select',
         'triggerdown', 'triggerup', 'gripdown', 'gripup',
         'abuttondown', 'abuttonup', 'bbuttondown', 'bbuttonup',
+        'xbuttondown', 'xbuttonup', 'ybuttondown', 'ybuttonup',
         'thumbstickmoved', 'thumbstickdown', 'thumbstickup',
       ].forEach(evtName => {
         this.el.addEventListener(evtName, this.distributionFunc);
@@ -134,6 +135,7 @@ AFRAME.registerComponent('event-distributor', {
     ['thumbmenu-select',
       'triggerdown', 'triggerup', 'gripdown', 'gripup',
       'abuttondown', 'abuttonup', 'bbuttondown', 'bbuttonup',
+      'xbuttondown', 'xbuttonup', 'ybuttondown', 'ybuttonup',
       'thumbstickmoved', 'thumbstickdown', 'thumbstickup',
     ].forEach(evtName => {
       this.el.removeEventListener(evtName, this.distributionFunc);
