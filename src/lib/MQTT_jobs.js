@@ -7,8 +7,8 @@ import { AppMode, isControlMode, requireRobotRequest, isNonControlMode } from '.
 
 const MQTT_REQUEST_TOPIC = "mgr/request";
 const MQTT_DEVICE_TOPIC = "dev/" + idtopic;
-const MQTT_DEVICE_TOPIC_ARM = "dev/" + idtopic+"-";
 const MQTT_CTRL_TOPIC = "control/" + idtopic; // 自分のIDに制御を送信
+const MQTT_CTRL_TOPIC_ARM = "control/" + idtopic + "-"; // 自分のIDに制御を送信( left right)
 const MQTT_ROBOT_STATE_TOPIC = "robot/";
 
 const NOVA2_JOINT2_DIFF = 90; 
@@ -59,7 +59,7 @@ export const sendRobotJointMQTT = (joints, gripState, arm,  button_a, button_b, 
     button: [button_a, button_b],
     thumbstick: thumbstick
   });
-  publishMQTT(MQTT_DEVICE_TOPIC_ARM+arm, ctl_json); // arm 毎に違うトピックにする！
+  publishMQTT(MQTT_CTRL_TOPIC_ARM+arm, ctl_json); // arm 毎に違うトピックにする！
 }
 
 // viewer/simRobot はロボットの関節をこれで送信
@@ -220,7 +220,7 @@ export const setupMQTT = (props, robotIDRef, robotRightDOMRef,robotLeftDOMRef, s
           let data = JSON.parse(message.toString()) ///
           let isGripOn = false;
           if (robotRightDOMRef.current) {
-//            isGripOn = robotRightDOMRef.current.gripState;
+              isGripOn = robotRightDOMRef.current.gripState;
           }
 
           if (firstReceiveJoint || isGripOn) { // 最初の受信か、GripがONのときだけ反映
