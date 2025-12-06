@@ -108,7 +108,10 @@ AFRAME.registerComponent('reflect-worker-joints', {
 
 			// left right の情報も送る必要があるよね！
 			// 本当は一緒におくったほうが良いから、、、どっちかだけ？
-			this.sendMQTT(jointData, this.el.gripState, this.data.arm, this.el.button_a_state, this.el.button_b_state, this.el.thumbstick);
+			// ここで、VRモードじゃないうちは送らないのが正しい！（そもそも腕が動かないので）
+			if (this.el.sceneEl.vrmode){
+				this.sendMQTT(jointData, this.el.gripState, this.data.arm, this.el.button_a_state, this.el.button_b_state, this.el.thumbstick);
+			}
 		}
 	}
 });

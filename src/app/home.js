@@ -18,6 +18,7 @@ import '../compo_aframe/model_opacity.js'
 import '../compo_aframe/abButtonControl.js';
 import '../compo_aframe/xyButtonControl.js';
 import '../compo_aframe/gripControl.js';
+import '../compo_aframe/vrModeDetect.js';
 import '../compo_aframe/thumbStickControl.js';
 
 import '../compo_aframe/attachToAnother.js';
@@ -116,7 +117,7 @@ export default function Home(props) {
 
     return (
       <>
-        <a-scene xr-mode-ui={`enabled: ${!(props.appmode === AppMode.viewer) ? 'true' : 'false'}; XRMode: xr`} >
+        <a-scene vr-mode-detect xr-mode-ui={`enabled: ${!(props.appmode === AppMode.viewer) ? 'true' : 'false'}; XRMode: xr`} >
           {/* robot registry は１つだけ */}
           <a-entity id="robot-registry"
             robot-registry

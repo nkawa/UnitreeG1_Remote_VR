@@ -3,8 +3,7 @@
 import AFRAME from 'aframe';
 import '../compo_aframe/vrControllerThumbMenu.js'; // with thumbMenuEventHandler
 import '../compo_aframe/axesFrame.js';
-import '../compo_aframe/abButtonControl.js';
-import '../compo_aframe/gripControl.js';
+
 
 
 export default VrControllerComponents;
@@ -19,8 +18,6 @@ function VrControllerComponents(props) {
                 oculus-touch-controls="hand: right"
                 thumbstick-menu={`items: ${menuItems1}`}
                 thumbmenu-event-handler
-                ab-button-control
-                grip-control
                 target-selector
                 event-distributor
                 visible="true">
