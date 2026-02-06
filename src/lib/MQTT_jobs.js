@@ -8,6 +8,7 @@ import { AppMode, isControlMode, requireRobotRequest, isNonControlMode } from '.
 const MQTT_REQUEST_TOPIC = "mgr/request";
 const MQTT_DEVICE_TOPIC = "dev/" + idtopic;
 const MQTT_CTRL_TOPIC = "control/" + idtopic; // 自分のIDに制御を送信
+const MQTT_CTRL_TOPIC_ARM = "control/" + idtopic + "-"; // 自分のIDに制御を送信( left right)
 const MQTT_ROBOT_STATE_TOPIC = "robot/";
 
 const NOVA2_JOINT2_DIFF = 90; 
@@ -35,13 +36,13 @@ let firstReceiveJoint = true; // 最初のジョイント受信フラグ
 
 
 // 通常はロボットの関節状況をこれで送信
-export const sendRobotJointMQTT = (joints, gripState, arm,  button_a, button_b) => {
+export const sendRobotJointMQTT = (joints, gripState, arm,  button_a, button_b, thumbstick) => {
   //  console.log("Joints!", joints)
 //  receive_state = JointReceiveStatus.READY // for debug
 
   if (receive_state != JointReceiveStatus.READY) {
 //    console.log("Not yet real robot joint received", receive_state, firstReceiveJoint);
-//    return; // 最初の受信まで送らない
+    return; // 最初の受信まで送らない
   }
 
 //  if (arm==="left"){// とりあえず右だけ
@@ -56,21 +57,23 @@ export const sendRobotJointMQTT = (joints, gripState, arm,  button_a, button_b) 
     joints: joints,
     grip: [gripState],
     button: [button_a, button_b],
+    thumbstick: thumbstick
   });
-  publishMQTT(MQTT_CTRL_TOPIC, ctl_json);
+  publishMQTT(MQTT_CTRL_TOPIC_ARM+arm, ctl_json); // arm 毎に違うトピックにする！
 }
 
 // viewer/simRobot はロボットの関節をこれで送信
-export const sendRobotStateMQTT = (joints, gripState,arm, button_a, button_b) => {
+export const sendRobotStateMQTT = (joints, gripState,arm, button_a, button_b,thumbstick) => {
   //  console.log("Joints!", joints)
   const state_json = JSON.stringify({
     time: send_count++,
     joints: joints,
     grip: [gripState],
     arm: arm,
-    button: [button_a, button_b]
+    button: [button_a, button_b],
+    thumbstick: thumbstick
   });
-  publishMQTT(MQTT_ROBOT_STATE_TOPIC + idtopic, state_json);
+  publishMQTT(MQTT_ROBOT_STATE_TOPIC + idtopic+"-"+arm, state_json);
 };
 
 
@@ -139,9 +142,13 @@ export const setupMQTT = (props, robotIDRef, robotRightDOMRef,robotLeftDOMRef, s
       } else {
         window.mqttClient = connectMQTT();
       }
-      subscribeMQTT([
-        MQTT_DEVICE_TOPIC
-      ]);
+      // ここで待つべき
+      sleep(500).then(() => {
+        console.log("Subscribe MQTT after wait MQTT_DEVICE_TOPIC");
+        subscribeMQTT([
+          MQTT_DEVICE_TOPIC
+        ]);
+      })
     }
     //      console.log("Subscribe:",MQTT_DEVICE_TOPIC);
     //        MQTT_CTRL_TOPIC  // MQTT Version5 なので、 noLocal が効くはず
@@ -215,9 +222,13 @@ export const setupMQTT = (props, robotIDRef, robotRightDOMRef,robotLeftDOMRef, s
 
         if (topic === MQTT_ROBOT_STATE_TOPIC + robotIDRef.current) { // ロボットの姿勢を受け取ったら
           let data = JSON.parse(message.toString()) ///
+          let isGripOn = false;
+          if (robotRightDOMRef.current) {
+              isGripOn = robotRightDOMRef.current.gripState;
+          }
 
-          if (firstReceiveJoint) {
-            console.log("First joint Received joints",data)
+          if (firstReceiveJoint || isGripOn) { // 最初の受信か、GripがONのときだけ反映
+            console.log("First joint Received joints",data, "status",receive_state )
 
             receive_state = JointReceiveStatus.JOINT_RECEIVED;
             if (robotRightDOMRef.current && robotRightDOMRef.current.workerRef) {
