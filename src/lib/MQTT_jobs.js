@@ -142,9 +142,13 @@ export const setupMQTT = (props, robotIDRef, robotRightDOMRef,robotLeftDOMRef, s
       } else {
         window.mqttClient = connectMQTT();
       }
-      subscribeMQTT([
-        MQTT_DEVICE_TOPIC
-      ]);
+      // ここで待つべき
+      sleep(500).then(() => {
+        console.log("Subscribe MQTT after wait MQTT_DEVICE_TOPIC");
+        subscribeMQTT([
+          MQTT_DEVICE_TOPIC
+        ]);
+      })
     }
     //      console.log("Subscribe:",MQTT_DEVICE_TOPIC);
     //        MQTT_CTRL_TOPIC  // MQTT Version5 なので、 noLocal が効くはず
